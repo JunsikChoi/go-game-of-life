@@ -8,6 +8,6 @@
 
 ## Features
 
-[ ] Play, Pause, Reset state
-[ ] Adjust simulation speed
-[ ] Add live cells with cursor
+- [v] Play, Pause, Reset state
+- [ ] Adjust simulation speed
+- [v] Add live cells with cursor

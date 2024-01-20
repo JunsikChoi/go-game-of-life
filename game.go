@@ -9,12 +9,14 @@ import (
 type Game struct {
 	state [][]*Cell
 	worldSize int
-	play chan bool
+	isPlay bool
+	stop chan bool
 }
 
 func (g *Game) init() {
+	g.stop = make(chan bool)
+	g.isPlay = false
 	state := make([][]*Cell, g.worldSize)
-
 	for row := 0; row < g.worldSize; row++ {
 		state[row] = make([]*Cell, 0, g.worldSize)
 		for col := 0; col < g.worldSize; col++ {
@@ -91,12 +93,11 @@ func (g *Game) Render() {
 }
 
 func (g *Game) Play() {
+	g.isPlay = true
 	ticker := time.NewTicker(time.Second)
-	g.play = make(chan bool)
-
 	for {
 		select {
-		case <- g.play:
+		case <- g.stop:
 			ticker.Stop()
 			return
 		case <- ticker.C:
@@ -104,4 +105,21 @@ func (g *Game) Play() {
 			g.Render()
 		}
 	}
+}
+
+func (g *Game) Stop() {
+	if (g.isPlay) {
+		g.stop <- true
+		g.isPlay = false
+	}
+}
+
+func (g *Game) Reset() {
+	g.Stop()
+	for _, row := range g.state {
+		for _, cell := range row {
+			cell.Die()
+		}
+	}
+	g.Render()
 }

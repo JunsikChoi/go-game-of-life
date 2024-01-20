@@ -20,14 +20,21 @@ func main() {
 	grid := container.New(layout.NewGridLayout(worldSize), cells...)
 
 	forwardBtn := widget.NewButton("Play", func() {
-		go game.Play()
+		if !game.isPlay {
+			go game.Play()
+		}
 	})
 
 	stopBtn := widget.NewButton("Stop", func() {
-		game.play <- true
+		game.Stop()
 	})
 
-	content := container.New(layout.NewVBoxLayout(), grid, forwardBtn, stopBtn)
+	resetBtn := widget.NewButton("Reset", func() {
+		game.Reset()
+	})
+
+	btnContainer := container.New(layout.NewHBoxLayout(), forwardBtn, stopBtn, resetBtn)
+	content := container.New(layout.NewVBoxLayout(), grid, btnContainer)
 	myWindow.SetContent(content)
 	myWindow.ShowAndRun()
 }
